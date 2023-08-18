@@ -152,17 +152,6 @@ $default_selected_option = isset($last_submitted_data['selected_option']) ? $las
         // Add the new data to the array and update the option 
         $all_data[] = $new_data;
         update_option('custom_post_monetization_all_data', $all_data);
-         // Calculate earnings for this post and store it
-    if (isset($post_view_data[$post_id])) {
-        $view_data = $post_view_data[$post_id];
-        $total_viewers = count($view_data);
-        $earnings = $total_viewers * $post_view_rate;
-
-        // Store earnings data for this post
-        $earnings_data = get_option('custom_post_earnings_data', array());
-        $earnings_data[$post_id] = $earnings;
-        update_option('custom_post_earnings_data', $earnings_data);
-    }
     }
     ?>
     <div class="post-monitization-div">
@@ -265,3 +254,4 @@ function custom_sub_menu_page() {
         margin-bottom: 10px;
     }
 </style>
+
