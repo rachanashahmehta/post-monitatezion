@@ -1,0 +1,16 @@
+.post-monitization-div {
+        max-width: 400px;
+        margin-top: 35px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #f7f7f7;
+    }
+    .post-monitization-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    .post-monitization-select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
