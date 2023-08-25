@@ -46,6 +46,26 @@ function custom_store_post_data_on_view() {
         $post_view_data[$post_id]['earnings'] += $monetization_data['post_view_rate'];;
         // Store the updated array in the wp_options table
         update_option('custom_post_view_data', $post_view_data);
+
+        // Get the log folder path
+        $log_folder_path = wp_upload_dir()['basedir'] . '/post-monitization-logs';
+
+        // Create the log folder if it doesn't exist
+        if (!file_exists($log_folder_path)) {
+            wp_mkdir_p($log_folder_path);
+        }
+
+        // Create the log file path
+        $log_file_path = $log_folder_path . '/' . $post_id . '.log';
+
+        // Get the current user's IP address
+        $user_ip_address = $_SERVER['REMOTE_ADDR'];
+
+        // Log the post view in the log file
+        $log_content = "[$current_time]". " Post Viewed IP:$user_ip_address\n\n";;
+
+        // Append the log content to the log file
+        file_put_contents($log_file_path, $log_content, FILE_APPEND);
     }
 }
 
@@ -84,26 +104,6 @@ function custom_display_monetization_column_data($column_name, $post_id) {
             echo 'No viewers';
         }
     }
-    elseif ($column_name === 'post_earnings') {
-        // Retrieve the post view data array and monetization data
-        $post_view_data = get_option('custom_post_view_data', array());
-        $monetization_data = get_option('custom_post_monetization_all_data', array());
-
-        $earnings = 0;
-
-        // Calculate earnings for this post
-        if (isset($post_view_data[$post_id]) && !empty($monetization_data)) {
-            $view_data = $post_view_data[$post_id];
-            $total_viewers = count($view_data);
-
-            foreach ($monetization_data as $data) {
-                $post_view_rate = isset($data['post_view_rate']) ? $data['post_view_rate'] : 0;
-                $earnings += $total_viewers * $post_view_rate;
-            }
-        }
-
-        echo "Earnings: $earnings"; // Display calculated earnings
-    }
 }
 // Register the admin menu
 add_action('admin_menu', 'custom_post_monetization_menu');
@@ -138,5 +138,19 @@ function custom_post_monetization_page() {
 // Function to display content on the custom sub-menu page
 function custom_sub_menu_page() {
     include 'submenu/details.php';
+}
+
+// Hook into the activation of the plugin
+register_activation_hook(__FILE__, 'custom_plugin_activation');
+
+function custom_plugin_activation() {
+    // Create a folder in the wp-content/uploads directory
+    $upload_dir = wp_upload_dir();
+    $new_folder_path = $upload_dir['basedir'] . '/post-monitization-logs';
+
+    // Create the folder if it doesn't exist
+    if (!file_exists($new_folder_path)) {
+        wp_mkdir_p($new_folder_path);
+    }
 }
 ?>
