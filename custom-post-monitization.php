@@ -138,7 +138,7 @@ function custom_post_monetization_page() {
 // Function to display content on the custom sub-menu page
 function custom_sub_menu_page() {
     $post_view_data = get_option('custom_post_view_data', array());
-$monetization_data = get_option('custom_post_monetization_all_data', array());
+    $monetization_data = get_option('custom_post_monetization_all_data', array());
 
 echo '<div class="wrap">';
 echo '<h1>Monetization Details</h1>';
@@ -150,7 +150,8 @@ echo '<th>Post ID</th>';
 echo '<th>Post Title</th>';
 echo '<th>Views</th>';
 echo '<th>Post View Rate</th>';
-echo '<th>Earnings</th>'; // Add new column
+echo '<th>Earnings</th>'; 
+echo '<th>Log Content</th>'; // New column for log content
 echo '</tr>';
 echo '</thead>';
 echo '<tbody>';
@@ -174,12 +175,29 @@ foreach ($post_view_data as $post_id => $view_data) {
             $stored_earnings = 0;
         }
 
+         // Get the log file path
+         $log_folder_path = wp_upload_dir()['basedir'] . '/post-monitization-logs';
+         $log_file_path = $log_folder_path . '/' . $post_id . '.log';
+ 
+         //Check if the log file exists before reading it
+         if(file_exists($log_file_path)){
+
+            // Read log content from the file
+            $log_content = file_get_contents($log_file_path);
+
+         }else{
+
+            //Display a message indicating no log file is available
+            $log_content = 'No Log file Available';
+         }
+
         echo '<tr>';
         echo "<td>$post_id</td>";
         echo "<td>$post_title</td>";
         echo "<td>$total_viewers</td>";
-        echo "<td>$post_view_rate</td>"; // Display last post_view_rate
+        echo "<td>$post_view_rate</td>"; 
         echo "<td>$stored_earnings</td>"; // Display calculated earnings
+        echo "<td><a href='javascript:void(0);' class='show-log' data-log-content='" . htmlspecialchars($log_content) . "'>View Log</a></td>";
         echo '</tr>';
     }
 }
@@ -202,5 +220,22 @@ function custom_plugin_activation() {
     if (!file_exists($new_folder_path)) {
         wp_mkdir_p($new_folder_path);
     }
+}
+// Add JavaScript code to handle the click event and display the dialog box or alert box
+add_action('admin_footer', 'custom_add_js_script');
+
+function custom_add_js_script() {
+    echo '<script>
+        jQuery(document).ready(function($) {
+            $(".show-log").on("click", function() {
+                var logContent = $(this).data("log-content");
+                if (logContent) {
+                    // Display the log content in a dialog box or alert box
+                    // You can customize this part based on your preferred dialog library
+                    alert(logContent);
+                }
+            });
+        });
+    </script>';
 }
 ?>
