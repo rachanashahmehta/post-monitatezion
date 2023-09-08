@@ -230,9 +230,12 @@ function custom_add_js_script() {
             $(".show-log").on("click", function() {
                 var logContent = $(this).data("log-content");
                 if (logContent) {
-                    // Display the log content in a dialog box or alert box
-                    // You can customize this part based on your preferred dialog library
-                    alert(logContent);
+                    var newPage = document.createElement("html");
+                    newPage.innerHTML = "<head><title>Log Content</title></head><body><pre>" + logContent + "</pre></body>";
+                    var newWindow = window.open();
+                    newWindow.document.write(newPage.outerHTML);
+                    newWindow.document.close();
+                    //alert(logContent);
                 }
             });
         });
