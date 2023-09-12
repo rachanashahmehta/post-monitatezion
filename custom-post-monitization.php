@@ -197,14 +197,29 @@ foreach ($post_view_data as $post_id => $view_data) {
         echo "<td>$total_viewers</td>";
         echo "<td>$post_view_rate</td>"; 
         echo "<td>$stored_earnings</td>"; // Display calculated earnings
-        echo "<td><a href='javascript:void(0);' class='show-log' data-log-content='" . htmlspecialchars($log_content) . "'>View Log</a></td>";
+        $log_content_for_link = nl2br(htmlspecialchars($log_content));
+        echo "<td><a href='javascript:void(0);' class='show-log' data-log-content='$log_content_for_link'>View Log</a></td>";
         echo '</tr>';
     }
 }
 
+    echo '</tbody>';
+    echo '</table>';
+    echo '</div>';
+    echo '</div>';
+
+echo '<table class="widefat fixed" cellspacing="0" id="log-details-table">';
+echo '<thead>';
+echo '<tr>';
+echo '<th>Log Details</th>';
+echo '</tr>';
+echo '</thead>';
+echo '<tbody>';
+echo '<tr>';
+echo '<td id="log-details-content"></td>';
+echo '</tr>';
 echo '</tbody>';
 echo '</table>';
-
 echo '</div>';
 }
 
@@ -226,19 +241,32 @@ add_action('admin_footer', 'custom_add_js_script');
 
 function custom_add_js_script() {
     echo '<script>
-        jQuery(document).ready(function($) {
-            $(".show-log").on("click", function() {
-                var logContent = $(this).data("log-content");
-                if (logContent) {
-                    var newPage = document.createElement("html");
-                    newPage.innerHTML = "<head><title>Log Content</title></head><body><pre>" + logContent + "</pre></body>";
-                    var newWindow = window.open();
-                    newWindow.document.write(newPage.outerHTML);
-                    newWindow.document.close();
-                    //alert(logContent);
+    jQuery(document).ready(function($) 
+    { 
+        $(".show-log").on("click", function() { 
+            var logContent = $(this).data("log-content");
+             if (logContent) { 
+                var postID = $(this).closest("tr").find("td:first").text(); 
+                var newURL = window.location.href.split("#")[0] + "#tab=" + postID;
+                 window.location.href = newURL;
+                 //alert(logContent); 
+                 
+                 // Split the log content by line breaks
+                var logLines = logContent.split("<br>");
+
+                // Create a list to display the log lines
+                var logList = "<ul>";
+                for (var i = 0; i < logLines.length; i++) {
+                    logList += "<li>" + logLines[i] + "</li>";
                 }
-            });
-        });
+                logList += "</ul>";
+
+                // Populate the log details table with the list
+                $("#log-details-content").html(logList);
+
+                 } 
+            }); 
+        }); 
     </script>';
 }
 ?>
