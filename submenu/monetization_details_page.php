@@ -65,7 +65,7 @@
              echo "<td>$total_viewers</td>";
              echo "<td>$post_view_rate</td>"; 
              echo "<td>$stored_earnings</td>"; // Display calculated earnings
-             echo "<td><a href='?page=custom-sub-menu&tab=" . $post_id . "' class='show-log' data-log-content='" . esc_attr($log_content) . "'>View Log</a></td>";
+             echo "<td><a href='?page=" . MNOTIZATION_DETAILS_PAGE_URL . "&tab=" . $post_id . "' class='show-log' data-log-content='" . esc_attr($log_content) . "'>View Log</a></td>";
              echo '</tr>';
          }
      }
@@ -91,19 +91,25 @@
         // Split the log content by line breaks and display it in a table
          $log_lines = explode("\n", $log_content);
 
+          // Reverse the order of log lines to display the latest entry first
+            $log_lines = array_reverse($log_lines);
+
          echo '<div class="wrap" id="monetization-table">';
          echo '<h1>Log Details</h1>';
+
+          // Add a container with a fixed height and scrolling
+        echo '<div style="max-height: 400px; overflow-y: scroll;">';
          echo '<table class="widefat fixed" cellspacing="0" id="log-details-table">';
        
          foreach ($log_lines as $line) {
              echo '<tr><td>' . $line . '</td></tr>';
          }
          echo '</table>';
-         echo '<a href="?page=custom-sub-menu" class="back-to-monetization button-primary" style="margin-top: 20px;">Back</a>';
+         echo '</div>'; // Close the scrolling container
+         echo '<a href="?page=' . MNOTIZATION_DETAILS_PAGE_URL . '" class="back-to-monetization button-primary" style="margin-top: 20px;">Back</a>';
 
      }else {
          echo 'No log data available for this post.';
      }  
  }
-
-?>
+ ?>
